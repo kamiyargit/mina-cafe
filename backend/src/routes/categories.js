@@ -18,13 +18,14 @@ router.get("/", async (req, res, next) => {
 // Admin: create category
 router.post("/", adminAuth, uploadImage("image"), async (req, res, next) => {
   try {
-    const { titleEn, titleFa, descEn, descFa, icon } = req.body;
+    const { titleEn, titleFa, descEn, descFa, icon, orderingShowInList } = req.body;
     const category = await Category.create({
       titleEn,
       titleFa,
       descEn,
       descFa,
       icon: req.fileUrl || icon || "",
+      orderingShowInList: Number(orderingShowInList) || 0,
     });
     return res.status(201).json(category);
   } catch (err) {
@@ -36,7 +37,7 @@ router.post("/", adminAuth, uploadImage("image"), async (req, res, next) => {
 router.put("/:id", adminAuth, uploadImage("image"), async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { titleEn, titleFa, descEn, descFa, icon } = req.body;
+    const { titleEn, titleFa, descEn, descFa, icon, orderingShowInList } = req.body;
     const category = await Category.findById(id);
     if (!category) {
       return res.status(404).json({ message: "Category not found" });
@@ -45,6 +46,7 @@ router.put("/:id", adminAuth, uploadImage("image"), async (req, res, next) => {
     category.titleFa = titleFa;
     category.descEn = descEn;
     category.descFa = descFa;
+    category.orderingShowInList = Number(orderingShowInList) || 0;
     if (req.fileUrl) {
       category.icon = req.fileUrl;
     } else if (icon !== undefined) {

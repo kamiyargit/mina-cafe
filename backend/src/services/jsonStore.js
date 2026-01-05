@@ -140,9 +140,13 @@ const User = {
 const Category = {
   async find() {
     const db = readDb();
-    return db.categories.sort(
-      (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-    );
+    return db.categories.sort((a, b) => {
+      // Sort by orderingShowInList first (lower numbers first), then by createdAt
+      const orderA = a.orderingShowInList ?? 999;
+      const orderB = b.orderingShowInList ?? 999;
+      if (orderA !== orderB) return orderA - orderB;
+      return new Date(a.createdAt) - new Date(b.createdAt);
+    });
   },
 
   async findById(id) {

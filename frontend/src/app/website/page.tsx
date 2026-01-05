@@ -92,6 +92,7 @@ export default function WebsitePage() {
           products={products}
           lang={lang}
           hasMore={hasMore}
+          loading={loading}
           onLoadMore={() => fetchProducts(page + 1)}
         />
         {loading && (

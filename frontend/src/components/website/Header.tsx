@@ -18,6 +18,9 @@ export function Header({ lang, onLangChange }: HeaderProps) {
           alt="Mina Cafe Logo"
           className="h-10 w-auto"
         />
+        <span className="text-base font-bold mt-1 text-gray-800">
+          {isFa ? "مینا کافه" : "Mina Cafe"}
+        </span>
       </div>
       <div className="flex items-center gap-3 text-sm">
         <button

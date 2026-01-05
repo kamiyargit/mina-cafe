@@ -5,6 +5,7 @@ export type Category = {
   descEn?: string;
   descFa?: string;
   icon?: string;
+  orderingShowInList?: number;
 };
 
 export type Product = {

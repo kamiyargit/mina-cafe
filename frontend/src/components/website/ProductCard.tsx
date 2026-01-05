@@ -1,4 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import type { Product } from "@/types";
+import { resolveImageUrl } from "@/lib/api";
 
 type Props = {
   product: Product;
@@ -6,27 +10,33 @@ type Props = {
 };
 
 export function ProductCard({ product, lang }: Props) {
+  const [imageError, setImageError] = useState(false);
   const titleKey = lang === "fa" ? "titleFa" : "titleEn";
   const descKey = lang === "fa" ? "descFa" : "descEn";
+  const currency = lang === "fa" ? "تومان" : "Toman";
 
   const finalPrice =
     product.discount && product.discount > 0
       ? product.price * (1 - product.discount / 100)
       : product.price;
 
+  const imageUrl = resolveImageUrl(product.image);
+  const showPlaceholder = !imageUrl || imageError;
+
   return (
     <div className="flex gap-3 rounded-2xl border border-gray-200 p-3">
-      {product.image ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={product.image}
-          alt={product[titleKey]}
-          className="h-20 w-20 rounded-xl object-cover flex-shrink-0"
-        />
-      ) : (
+      {showPlaceholder ? (
         <div className="h-20 w-20 rounded-xl bg-gray-100 flex items-center justify-center text-xs text-gray-400 flex-shrink-0">
           {lang === "fa" ? "بدون عکس" : "No image"}
         </div>
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={imageUrl}
+          alt={product[titleKey]}
+          className="h-20 w-20 rounded-xl object-cover flex-shrink-0"
+          onError={() => setImageError(true)}
+        />
       )}
       <div className="flex flex-col justify-between flex-1">
         <div>
@@ -49,15 +59,15 @@ export function ProductCard({ product, lang }: Props) {
             {product.discount && product.discount > 0 ? (
               <>
                 <span className="line-through text-gray-400">
-                  {product.price.toLocaleString()} تومان
+                  {product.price.toLocaleString()} {currency}
                 </span>
                 <span className="font-bold">
-                  {finalPrice.toLocaleString()} تومان
+                  {finalPrice.toLocaleString()} {currency}
                 </span>
               </>
             ) : (
               <span className="font-bold">
-                {product.price.toLocaleString()} تومان
+                {product.price.toLocaleString()} {currency}
               </span>
             )}
           </div>

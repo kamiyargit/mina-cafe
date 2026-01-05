@@ -12,7 +12,6 @@ const crypto = require("crypto");
 const PERSISTENT_UPLOADS = "/var/lib/data/uploads";
 const LOCAL_UPLOADS = path.join(__dirname, "..", "..", "uploads");
 const uploadsDir = fsSync.existsSync("/var/lib/data") ? PERSISTENT_UPLOADS : LOCAL_UPLOADS;
-const baseUrl = process.env.BASE_URL || "http://localhost:4000";
 
 // Ensure uploads directory exists
 async function ensureUploadsDir() {
@@ -28,7 +27,7 @@ async function ensureUploadsDir() {
  * @param {Buffer} fileBuffer - The file buffer to save
  * @param {string} originalName - Original filename
  * @param {string} mimeType - MIME type of the file
- * @returns {Promise<string>} Public URL of the uploaded file
+ * @returns {Promise<string>} Relative URL of the uploaded file (e.g., /uploads/filename.jpg)
  */
 async function uploadBuffer(fileBuffer, originalName, mimeType) {
   await ensureUploadsDir();
@@ -43,8 +42,8 @@ async function uploadBuffer(fileBuffer, originalName, mimeType) {
   // Save file to disk
   await fs.writeFile(filePath, fileBuffer);
 
-  // Return public URL
-  const publicUrl = `${baseUrl}/uploads/${filename}`;
+  // Return relative URL (works across environments without BASE_URL configuration)
+  const publicUrl = `/uploads/${filename}`;
   return publicUrl;
 }
 
