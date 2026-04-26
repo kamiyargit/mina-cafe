@@ -20,10 +20,10 @@ router.post("/", adminAuth, uploadImage("image"), async (req, res, next) => {
   try {
     const { titleEn, titleFa, descEn, descFa, icon, orderingShowInList } = req.body;
     const category = await Category.create({
-      titleEn,
-      titleFa,
-      descEn,
-      descFa,
+      titleEn: titleEn || "",
+      titleFa: titleFa || "",
+      descEn: descEn || "",
+      descFa: descFa || "",
       icon: req.fileUrl || icon || "",
       orderingShowInList: Number(orderingShowInList) || 0,
     });
@@ -33,25 +33,29 @@ router.post("/", adminAuth, uploadImage("image"), async (req, res, next) => {
   }
 });
 
-// Admin: update category
+// Admin: update category — only overwrite fields actually sent by the client
 router.put("/:id", adminAuth, uploadImage("image"), async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { titleEn, titleFa, descEn, descFa, icon, orderingShowInList } = req.body;
     const category = await Category.findById(id);
     if (!category) {
       return res.status(404).json({ message: "Category not found" });
     }
-    category.titleEn = titleEn;
-    category.titleFa = titleFa;
-    category.descEn = descEn;
-    category.descFa = descFa;
-    category.orderingShowInList = Number(orderingShowInList) || 0;
+
+    const { titleEn, titleFa, descEn, descFa, icon, orderingShowInList } = req.body;
+    if (titleEn !== undefined) category.titleEn = titleEn;
+    if (titleFa !== undefined) category.titleFa = titleFa;
+    if (descEn !== undefined) category.descEn = descEn;
+    if (descFa !== undefined) category.descFa = descFa;
+    if (orderingShowInList !== undefined) {
+      category.orderingShowInList = Number(orderingShowInList) || 0;
+    }
     if (req.fileUrl) {
       category.icon = req.fileUrl;
     } else if (icon !== undefined) {
       category.icon = icon;
     }
+
     const updated = await Category.save(category);
     return res.json(updated);
   } catch (err) {

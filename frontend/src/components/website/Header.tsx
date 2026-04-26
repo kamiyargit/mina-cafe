@@ -1,3 +1,5 @@
+"use client";
+
 type HeaderProps = {
   lang: "en" | "fa";
   onLangChange: (lang: "en" | "fa") => void;
@@ -5,49 +7,59 @@ type HeaderProps = {
 
 export function Header({ lang, onLangChange }: HeaderProps) {
   const isFa = lang === "fa";
+
   return (
-    <header className="flex items-center justify-between pt-0 pb-4 border-b border-gray-200">
-      <div className="flex flex-col items-center relative">
-        <img
-          src="/images/top-logo.png"
-          alt="Cafe Cup"
-          className="h-3 w-auto mb-0"
-        />
+    <header className="flex items-center justify-between gap-3 pt-1 pb-4 border-b border-gray-200">
+      <div className="flex items-center gap-2.5 min-w-0">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/images/mainlogo.png"
           alt="Mina Cafe Logo"
-          className="h-10 w-auto"
+          className="h-11 w-auto sm:h-12 shrink-0"
         />
-        <span className="text-base font-bold mt-1 text-gray-800">
-          {isFa ? "مینا کافه" : "Mina Cafe"}
-        </span>
+        <div className="flex flex-col leading-tight min-w-0">
+          <span className="text-base sm:text-lg font-bold text-gray-900 truncate">
+            {isFa ? "مینا کافه" : "Mina Cafe"}
+          </span>
+          <span className="text-[11px] sm:text-xs text-gray-500 truncate">
+            {isFa ? "منوی دیجیتال" : "Digital Menu"}
+          </span>
+        </div>
       </div>
-      <div className="flex items-center gap-3 text-sm">
+
+      {/* Segmented language toggle */}
+      <div
+        className="relative inline-flex items-center rounded-full bg-gray-100 p-0.5 text-xs sm:text-sm shrink-0"
+        role="tablist"
+        aria-label={isFa ? "زبان" : "Language"}
+      >
         <button
           type="button"
+          role="tab"
+          aria-selected={isFa}
           onClick={() => onLangChange("fa")}
-          className={`px-3 py-1.5 rounded transition-all duration-200 ${
+          className={`relative px-3 py-1.5 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1 ${
             isFa
-              ? "bg-black text-white shadow-md scale-105"
-              : "border border-gray-300 hover:border-gray-400"
-          } focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:scale-110 active:scale-95`}
+              ? "bg-black text-white shadow-sm"
+              : "text-gray-600 hover:text-gray-900"
+          }`}
         >
-          {isFa ? "فارسی" : "FA"}
+          فا
         </button>
         <button
           type="button"
+          role="tab"
+          aria-selected={!isFa}
           onClick={() => onLangChange("en")}
-          className={`px-3 py-1.5 rounded transition-all duration-200 ${
+          className={`relative px-3 py-1.5 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1 ${
             !isFa
-              ? "bg-black text-white shadow-md scale-105"
-              : "border border-gray-300 hover:border-gray-400"
-          } focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:scale-110 active:scale-95`}
+              ? "bg-black text-white shadow-sm"
+              : "text-gray-600 hover:text-gray-900"
+          }`}
         >
-          {!isFa ? "English" : "EN"}
+          EN
         </button>
       </div>
     </header>
   );
 }
-
-

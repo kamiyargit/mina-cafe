@@ -21,8 +21,8 @@ router.get("/", async (req, res, next) => {
       query.search = search;
     }
 
-    const pageNum = Number(page) || 1;
-    const limitNum = Number(limit) || 10;
+    const pageNum = Math.max(1, Number(page) || 1);
+    const limitNum = Math.min(100, Math.max(1, Number(limit) || 10));
     const skip = (pageNum - 1) * limitNum;
 
     const { items, total } = await Product.find(query, {
@@ -59,11 +59,11 @@ router.post("/", adminAuth, uploadImage("image"), async (req, res, next) => {
     } = req.body;
 
     const product = await Product.create({
-      titleEn,
-      titleFa,
-      descEn,
-      descFa,
-      price: Number(price),
+      titleEn: titleEn || "",
+      titleFa: titleFa || "",
+      descEn: descEn || "",
+      descFa: descFa || "",
+      price: Number(price) || 0,
       discount: Number(discount) || 0,
       status: status || "active",
       orderingShowInList: Number(orderingShowInList) || 0,
@@ -79,10 +79,15 @@ router.post("/", adminAuth, uploadImage("image"), async (req, res, next) => {
   }
 });
 
-// Admin: update product
+// Admin: update product — only overwrite fields actually sent by the client
 router.put("/:id", adminAuth, uploadImage("image"), async (req, res, next) => {
   try {
     const { id } = req.params;
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
     const {
       titleEn,
       titleFa,
@@ -96,25 +101,21 @@ router.put("/:id", adminAuth, uploadImage("image"), async (req, res, next) => {
       category,
     } = req.body;
 
-    const product = await Product.findById(id);
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+    if (titleEn !== undefined) product.titleEn = titleEn;
+    if (titleFa !== undefined) product.titleFa = titleFa;
+    if (descEn !== undefined) product.descEn = descEn;
+    if (descFa !== undefined) product.descFa = descFa;
+    if (price !== undefined) product.price = Number(price) || 0;
+    if (discount !== undefined) product.discount = Number(discount) || 0;
+    if (status !== undefined) product.status = status;
+    if (orderingShowInList !== undefined) {
+      product.orderingShowInList = Number(orderingShowInList) || 0;
     }
-
-    product.titleEn = titleEn;
-    product.titleFa = titleFa;
-    product.descEn = descEn;
-    product.descFa = descFa;
-    product.price = Number(price);
-    product.discount = Number(discount) || 0;
-    product.status = status;
-    product.orderingShowInList = Number(orderingShowInList) || 0;
-    product.special = special === "true" || special === true;
-    product.categoryId = category;
-
-    if (req.fileUrl) {
-      product.image = req.fileUrl;
+    if (special !== undefined) {
+      product.special = special === "true" || special === true;
     }
+    if (category !== undefined) product.categoryId = category;
+    if (req.fileUrl) product.image = req.fileUrl;
 
     const saved = await Product.save(product);
     const populated = await Product.populate(saved);
