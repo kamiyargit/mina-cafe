@@ -21,8 +21,23 @@ export function Header({ lang, onLangChange }: HeaderProps) {
           <span className="text-base sm:text-lg font-bold text-gray-900 truncate">
             {isFa ? "مینا کافه" : "Mina Cafe"}
           </span>
-          <span className="text-[11px] sm:text-xs text-gray-500 truncate">
-            {isFa ? "منوی دیجیتال" : "Digital Menu"}
+          <span className="text-[11px] sm:text-xs text-gray-500 truncate flex items-center gap-1">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.6}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-3 h-3 text-amber-600"
+              aria-hidden="true"
+            >
+              <path d="M17 8h1a4 4 0 0 1 0 8h-1" />
+              <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" />
+              <path d="M6 1v3M10 1v3M14 1v3" />
+            </svg>
+            {isFa ? "نوشیدنی، شیرینی، صبحانه" : "Drinks, sweets & breakfast"}
           </span>
         </div>
       </div>

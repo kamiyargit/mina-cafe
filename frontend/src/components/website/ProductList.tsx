@@ -18,8 +18,14 @@ export function ProductList({ products, lang, onLoadMore, hasMore, loading }: Pr
 
   return (
     <div className="space-y-3">
-      {products.map((p) => (
-        <ProductCard key={p.id} product={p} lang={lang} />
+      {products.map((p, idx) => (
+        <div
+          key={p.id}
+          className="animate-card-rise"
+          style={{ animationDelay: `${Math.min(idx, 8) * 35}ms` }}
+        >
+          <ProductCard product={p} lang={lang} />
+        </div>
       ))}
 
       {showAppendSkeletons && <ProductSkeleton count={2} />}
@@ -43,12 +49,12 @@ export function ProductList({ products, lang, onLoadMore, hasMore, loading }: Pr
             <path d="M6 1v3M10 1v3M14 1v3" />
           </svg>
           <p className="text-sm font-medium text-gray-500">
-            {lang === "fa" ? "محصولی یافت نشد" : "No products found"}
+            {lang === "fa" ? "چیزی پیدا نشد" : "Nothing here yet"}
           </p>
-          <p className="mt-1 text-xs text-gray-400">
+          <p className="mt-1 text-xs text-gray-400 max-w-[16rem] text-center leading-relaxed">
             {lang === "fa"
-              ? "جستجو یا دسته دیگری را امتحان کنید"
-              : "Try a different search or category"}
+              ? "می‌توانی جستجو یا دسته‌ی دیگری را امتحان کنی"
+              : "Try a different search term or category"}
           </p>
         </div>
       )}
@@ -66,9 +72,11 @@ export function ProductList({ products, lang, onLoadMore, hasMore, loading }: Pr
       )}
 
       {!loading && !hasMore && products.length > 0 && (
-        <p className="text-center text-[11px] text-gray-400 pt-2 pb-2">
-          {lang === "fa" ? "پایان لیست" : "End of list"}
-        </p>
+        <div className="flex items-center justify-center gap-2 pt-3 pb-1 text-[11px] text-gray-400">
+          <span className="h-px w-8 bg-gray-200" />
+          <span>{lang === "fa" ? "همه‌چی همینه — نوش جان" : "That's our menu — enjoy"}</span>
+          <span className="h-px w-8 bg-gray-200" />
+        </div>
       )}
     </div>
   );

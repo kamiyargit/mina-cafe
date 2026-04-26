@@ -93,6 +93,12 @@ export default function WebsitePage() {
     setPage(1);
     setHasMore(true);
     void fetchProducts(1, { replace: true, category: activeCategory, search });
+    // Bring the user back to the top of the list when filters change so they
+    // see the new results right away. Smooth scroll on user-driven changes,
+    // instant on the very first mount.
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCategory, search]);
 

@@ -84,7 +84,16 @@ export function ProductCard({ product, lang }: Props) {
               {title}
             </h3>
             {product.special && (
-              <span className="shrink-0 text-[10px] px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200">
+              <span className="shrink-0 inline-flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-2.5 h-2.5"
+                  aria-hidden="true"
+                >
+                  <path d="M12 2.5l2.6 5.27 5.82.85-4.21 4.1.99 5.78L12 15.77 6.8 18.5l.99-5.78-4.21-4.1 5.82-.85L12 2.5z" />
+                </svg>
                 {lang === "fa" ? "ویژه" : "Special"}
               </span>
             )}
