@@ -20,10 +20,11 @@ export default function Home() {
       className={`min-h-screen flex flex-col items-center justify-center gap-6 px-4 relative ${
         lang === "fa" ? "font-persian" : ""
       }`}
-      style={{ 
-        fontFamily: lang === "fa" 
-          ? '"Vazirmatn", "Vazir", "Tahoma", sans-serif' 
-          : '"Shadows Into Light", cursive' 
+      style={{
+        fontFamily:
+          lang === "fa"
+            ? '"Vazirmatn", "Vazir", "Tahoma", sans-serif'
+            : 'system-ui, -apple-system, "Segoe UI", sans-serif',
       }}
     >
       {/* Background Image with Opacity */}

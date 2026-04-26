@@ -1,5 +1,35 @@
-@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&family=Shadows+Into+Light&display=swap");
 @import "tailwindcss";
+
+/* Self-hosted Vazirmatn so the site works for users (and builds) that
+   can't reach fonts.googleapis.com. Files live in /public/fonts. */
+@font-face {
+  font-family: "Vazirmatn";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Vazirmatn";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-Medium.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Vazirmatn";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-SemiBold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Vazirmatn";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/Vazirmatn-Bold.woff2") format("woff2");
+}
 
 :root {
   --background: #fafaf7;
