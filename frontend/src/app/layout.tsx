@@ -1,12 +1,5 @@
 import type { Metadata } from "next";
-import { Shadows_Into_Light } from "next/font/google";
 import "./globals.css";
-
-const shadowsIntoLight = Shadows_Into_Light({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-shadows-into-light",
-});
 
 export const metadata: Metadata = {
   title: "Mina Cafe | Digital Menu",
@@ -23,7 +16,7 @@ export default function RootLayout({
   // language so the rendered HTML stays in sync with the active locale.
   return (
     <html lang="fa" dir="rtl">
-      <body className={`bg-background text-foreground antialiased ${shadowsIntoLight.variable}`}>
+      <body className="bg-background text-foreground antialiased">
         {children}
       </body>
     </html>
