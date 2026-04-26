@@ -45,7 +45,10 @@ export default function WebsitePage() {
   }, [searchInput]);
 
   const fetchProducts = useCallback(
-    async (nextPage: number, opts: { replace?: boolean; category?: string; search?: string } = {}) => {
+    async (
+      nextPage: number,
+      opts: { replace?: boolean; category?: string; search?: string } = {}
+    ) => {
       const myReqId = ++requestIdRef.current;
       setLoading(true);
       try {
@@ -100,28 +103,39 @@ export default function WebsitePage() {
 
   return (
     <div className="min-h-screen bg-background flex justify-center">
-      <div className="w-full max-w-xl px-4 pt-3 pb-10 sm:pt-5 space-y-3 sm:space-y-4">
-        <Header lang={lang} onLangChange={setLang} />
-        <SearchBox
-          value={searchInput}
-          onChange={setSearchInput}
-          onClear={() => setSearchInput("")}
-          placeholder={lang === "fa" ? "جستجو در منو…" : "Search menu…"}
-          lang={lang}
-        />
-        <CategoryFilter
-          categories={categories}
-          activeId={activeCategory}
-          onChange={setActiveCategory}
-          lang={lang}
-        />
-        <ProductList
-          products={products}
-          lang={lang}
-          hasMore={hasMore}
-          loading={loading}
-          onLoadMore={handleLoadMore}
-        />
+      <div className="w-full max-w-xl">
+        <div className="px-4 pt-3 sm:pt-5">
+          <Header lang={lang} onLangChange={setLang} />
+        </div>
+
+        {/* Sticky search + categories — stays visible as user scrolls products */}
+        <div className="sticky top-0 z-30 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70 border-b border-gray-100">
+          <div className="px-4 pt-3 pb-2 space-y-2">
+            <SearchBox
+              value={searchInput}
+              onChange={setSearchInput}
+              onClear={() => setSearchInput("")}
+              placeholder={lang === "fa" ? "جستجو در منو…" : "Search menu…"}
+              lang={lang}
+            />
+            <CategoryFilter
+              categories={categories}
+              activeId={activeCategory}
+              onChange={setActiveCategory}
+              lang={lang}
+            />
+          </div>
+        </div>
+
+        <div className="px-4 pt-3 pb-10 space-y-3">
+          <ProductList
+            products={products}
+            lang={lang}
+            hasMore={hasMore}
+            loading={loading}
+            onLoadMore={handleLoadMore}
+          />
+        </div>
       </div>
     </div>
   );

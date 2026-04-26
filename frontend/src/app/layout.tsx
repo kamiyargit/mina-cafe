@@ -18,8 +18,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Default initial direction/language matches the most common audience (Persian).
+  // Client pages update these via documentElement when the user toggles the
+  // language so the rendered HTML stays in sync with the active locale.
   return (
-    <html lang="en">
+    <html lang="fa" dir="rtl">
       <body className={`bg-background text-foreground antialiased ${shadowsIntoLight.variable}`}>
         {children}
       </body>
