@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button, Form, Input, Modal, Space, Table } from "antd";
+import { Button, Form, Input, InputNumber, Modal, Space, Table } from "antd";
 import api from "@/lib/api";
 import type { Category } from "@/types";
 import { LiaraImageUpload } from "@/components/admin/LiaraImageUpload";
@@ -122,13 +122,20 @@ export default function AdminCategoriesPage() {
           dataSource={items}
           scroll={{ x: "max-content" }}
           columns={[
-            { 
-              title: "عنوان فارسی", 
+            {
+              title: "ترتیب",
+              dataIndex: "orderingShowInList",
+              width: 70,
+              responsive: ["sm", "md", "lg"],
+              render: (v: number | undefined) => v ?? "-",
+            },
+            {
+              title: "عنوان فارسی",
               dataIndex: "titleFa",
               responsive: ["xs", "sm", "md", "lg"],
             },
-            { 
-              title: "عنوان انگلیسی", 
+            {
+              title: "عنوان انگلیسی",
               dataIndex: "titleEn",
               responsive: ["sm", "md", "lg"],
             },
@@ -197,6 +204,17 @@ export default function AdminCategoriesPage() {
           </Form.Item>
           <Form.Item name="descEn" label="توضیحات انگلیسی">
             <Input.TextArea rows={3} />
+          </Form.Item>
+          <Form.Item
+            name="orderingShowInList"
+            label="ترتیب نمایش"
+            tooltip="عدد کمتر = اولویت بالاتر"
+          >
+            <InputNumber
+              min={0}
+              className="w-full"
+              placeholder="0"
+            />
           </Form.Item>
           <Form.Item name="icon" label="تصویر">
             <LiaraImageUpload

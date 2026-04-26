@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import api from "@/lib/api";
 import type { Category, Product } from "@/types";
 import { Header } from "@/components/website/Header";
 import { SearchBox } from "@/components/website/SearchBox";
 import { CategoryFilter } from "@/components/website/CategoryFilter";
 import { ProductList } from "@/components/website/ProductList";
+
+const PAGE_SIZE = 10;
 
 export default function WebsitePage() {
   const [lang, setLang] = useState<"en" | "fa">("fa");
@@ -15,14 +17,18 @@ export default function WebsitePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const requestIdRef = useRef(0);
 
   useEffect(() => {
     document.documentElement.setAttribute(
       "dir",
       lang === "fa" ? "rtl" : "ltr"
     );
+    document.documentElement.setAttribute("lang", lang);
   }, [lang]);
 
   useEffect(() => {
@@ -32,55 +38,76 @@ export default function WebsitePage() {
       .catch(() => {});
   }, []);
 
+  // Debounce search input -> committed search
+  useEffect(() => {
+    const t = setTimeout(() => setSearch(searchInput.trim()), 300);
+    return () => clearTimeout(t);
+  }, [searchInput]);
+
+  const fetchProducts = useCallback(
+    async (nextPage: number, opts: { replace?: boolean; category?: string; search?: string } = {}) => {
+      const myReqId = ++requestIdRef.current;
+      setLoading(true);
+      try {
+        const params: Record<string, string | number | boolean> = {
+          page: nextPage,
+          limit: PAGE_SIZE,
+        };
+        const cat = opts.category ?? activeCategory;
+        const q = opts.search ?? search;
+        if (cat) params.category = cat;
+        if (q) params.search = q;
+
+        const res = await api.get<{
+          items: Product[];
+          total: number;
+          page: number;
+          limit: number;
+        }>("/products", { params });
+
+        // Drop stale responses (a newer request superseded this one)
+        if (myReqId !== requestIdRef.current) return;
+
+        setProducts((prev) =>
+          opts.replace ? res.data.items : [...prev, ...res.data.items]
+        );
+        const loaded =
+          (nextPage - 1) * res.data.limit + res.data.items.length;
+        setHasMore(loaded < res.data.total);
+        setPage(nextPage);
+      } catch {
+        // ignore — keep current list
+      } finally {
+        if (myReqId === requestIdRef.current) setLoading(false);
+      }
+    },
+    [activeCategory, search]
+  );
+
+  // Reset and refetch whenever category or committed search changes
   useEffect(() => {
     setProducts([]);
     setPage(1);
     setHasMore(true);
-    // initial load (first 10 with special ordering handled by backend)
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    fetchProducts(1, true);
+    void fetchProducts(1, { replace: true, category: activeCategory, search });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCategory, search]);
 
-  async function fetchProducts(nextPage: number, replace = false) {
+  const handleLoadMore = () => {
     if (loading || !hasMore) return;
-    setLoading(true);
-    try {
-      const params: Record<string, string | number | boolean> = {
-        page: nextPage,
-        limit: 10,
-      };
-      if (activeCategory) params.category = activeCategory;
-      if (search) params.search = search;
-
-      const res = await api.get<{
-        items: Product[];
-        total: number;
-        page: number;
-        limit: number;
-      }>("/products", { params });
-
-      setProducts((prev) =>
-        replace ? res.data.items : [...prev, ...res.data.items]
-      );
-      const loaded = (nextPage - 1) * res.data.limit + res.data.items.length;
-      setHasMore(loaded < res.data.total);
-      setPage(nextPage);
-    } catch (e) {
-      // ignore for now
-    } finally {
-      setLoading(false);
-    }
-  }
+    void fetchProducts(page + 1);
+  };
 
   return (
     <div className="min-h-screen bg-background flex justify-center">
-      <div className="w-full max-w-xl px-4 py-4 space-y-4">
+      <div className="w-full max-w-xl px-4 pt-3 pb-10 sm:pt-5 space-y-3 sm:space-y-4">
         <Header lang={lang} onLangChange={setLang} />
         <SearchBox
-          value={search}
-          onChange={setSearch}
-          placeholder={lang === "fa" ? "جستجو در منو..." : "Search menu..."}
+          value={searchInput}
+          onChange={setSearchInput}
+          onClear={() => setSearchInput("")}
+          placeholder={lang === "fa" ? "جستجو در منو…" : "Search menu…"}
+          lang={lang}
         />
         <CategoryFilter
           categories={categories}
@@ -92,16 +119,10 @@ export default function WebsitePage() {
           products={products}
           lang={lang}
           hasMore={hasMore}
-          onLoadMore={() => fetchProducts(page + 1)}
+          loading={loading}
+          onLoadMore={handleLoadMore}
         />
-        {loading && (
-          <p className="text-center text-xs text-gray-400">
-            {lang === "fa" ? "در حال بارگذاری..." : "Loading..."}
-          </p>
-        )}
       </div>
     </div>
   );
 }
-
-

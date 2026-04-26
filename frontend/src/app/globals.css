@@ -2,7 +2,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #fafaf7;
   --foreground: #171717;
 }
 
@@ -11,16 +11,20 @@
   --color-foreground: var(--foreground);
 }
 
+html,
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Persian Font Support */
-html[dir="rtl"] body,
-html[dir="rtl"] * {
+/* Persian Font Support — apply via inheritance from <html dir="rtl">,
+   not a universal selector, to avoid overriding icon fonts (Ant Design, etc). */
+html[dir="rtl"],
+html[dir="rtl"] body {
   font-family: "Vazirmatn", "Vazir", "Tahoma", "Arial", sans-serif;
 }
 
@@ -38,6 +42,21 @@ html[dir="ltr"] {
 
 .ltr {
   direction: ltr;
+}
+
+/* Hide scrollbar utility — used by horizontal category strip */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth tap-highlight removal on mobile */
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Heating/Fog Animation Keyframes */
